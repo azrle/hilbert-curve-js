@@ -17,9 +17,9 @@ const ctx = setupCanvas(canvas)
 /*
 
 Hilbert curve unit
-* *
+0 3
 | |
-*-*
+1-2
 
 Note:
 Yes, we can use index and bit-operation to compute this directly.
