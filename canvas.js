@@ -48,8 +48,8 @@ function animate() {
     let [r, c] = d2rc(order, d)
     ctx.beginPath()
     ctx.moveTo(x, y)
-    x = (width-offset) / len * c + offset
-    y = (height-offset) / len * r + offset
+    x = (width - offset) / len * c + offset
+    y = (height - offset) / len * r + offset
     ctx.lineTo(x, y)
     ctx.stroke()
 
@@ -74,30 +74,19 @@ Section 3 is reflection symmetry across right diagonal
 
 */
 
-function d2rc(l, d) {
-    l--
-    // section, first two bits
-    let sec = d >> (l << 1)
-    // square length: 2^l = 1<<l
-    // total points: 2^(2*l) = 1<<(1<<l)
-    let r = unit_r[sec] * (1 << l)
-    let c = unit_c[sec] * (1 << l)
-    if (l == 0) return [r, c]
-    let [y, x] = d2rc(l, d & ((1 << (l << 1)) - 1))
-    switch (sec) {
-        case 0:
-            // left-diag-reflect
-            r += x
-            c += y
-            break
-        case 3:
-            // right-diag-reflect
-            r += (1 << l) - 1 - x
-            c += (1 << l) - 1 - y
-            break
-        default:
-            r += y
-            c += x
+function d2rc(order, d) {
+    let l = 0
+    let [r, c] = [0, 0]
+    while (l < order) {
+        let sec = d & 0x3
+        // left-diag-reflect
+        if (sec === 0) [r, c] = [c, r]
+        // right-diag-reflect
+        if (sec === 3) [r, c] = [(1 << l) - 1 - c, (1 << l) - 1 - r]
+        r += unit_r[sec] * (1 << l)
+        c += unit_c[sec] * (1 << l)
+        d >>= 2
+        l++
     }
     return [r, c]
 }
